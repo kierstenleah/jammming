@@ -1,0 +1,46 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&display=swap');
+
+header{
+    margin: 10%;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+h1{
+    font-weight: 800;
+    font-family: 'Anybody';
+    font-style: italic;
+    font-size: 6em;
+    color:white;
+    background-image: linear-gradient( white 0%, rgb(79, 79, 79) 100%);
+    background-clip: text;
+}
+
+#ja-kern{
+    letter-spacing: -10px;
+}
+
+#i-kern{
+    letter-spacing: -20px;
+    margin-left: -10px;
+}
+
+h2{
+    color: white;
+    font-size: 1.25em;
+}
+
+h2:nth-child(3){
+    font-weight:400;
+    margin: 1em 0 2.5em 0;
+}
+
+input{
+    width: 100%;
+    height: 1em;
+    font-size: 1.2em;
+    border-radius: 2em;
+    padding: 1em;
+}
+
+

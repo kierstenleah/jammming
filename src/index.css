@@ -1,0 +1,14 @@
+
+
+body {
+  margin: 0;
+  background-color: rgba(22, 18, 43, 0.772);
+  background-image: url('./assets/noise.jpg'),radial-gradient(circle at right center, rgb(208 78 141) 0% 0%, rgb(120 53 126) 40%, rgb(56 46 109 / 77%) 100%);
+  background-blend-mode: overlay;
+  background-position: center, right bottom;
+}
+
+#root{
+  height: 100vh;
+}
+
