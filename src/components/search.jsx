@@ -1,17 +1,10 @@
-import '../css/main.module.css';
-import{useState} from 'react'
+import styles from '../css/main.module.css';
+import React from 'react';
 
-function Search(){
-
-    const [input, setInput] = useState('');
-
-    function handleChange(e){
-        e.preventDefault();
-        setInput(e.target.value)
-    }
+function Search({onInput, value}){
 
     return(
-        <input type='text' placeholder='Search' onChange={handleChange} value={input}/>
+        <input className={styles.search} name='search' type='text' placeholder='Search' onChange={onInput} value={value} autoFocus/>
     )
 }
 

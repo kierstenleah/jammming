@@ -6,6 +6,7 @@ body {
   background-image: url('./assets/noise.jpg'),radial-gradient(circle at right center, rgb(208 78 141) 0% 0%, rgb(120 53 126) 40%, rgb(56 46 109 / 77%) 100%);
   background-blend-mode: overlay;
   background-position: center, right bottom;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 #root{

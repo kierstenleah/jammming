@@ -1,17 +1,22 @@
+import styles from '../css/main.module.css';
+import React from 'react';
 
-function SongCard(){
+function SongCard({songName, artistName, imgUrl}){
+    
     return (
-        <div>
-            <div>
-                <img />
+        <div className={styles.songCard}>
+            <div className={styles.albumCover}>
+                <img src={imgUrl} height='70' width='70'/>
             </div>
-            <div>
-                <h3>Song Name</h3>
-                <h4>Artist</h4>
+            <div className={styles.songName}>
+                <h3>{songName}</h3>
+                <h4>{artistName.join(', ')}</h4>
             </div>
-            <div>
+            <div className={styles.addButton}>
                 <span>+</span>
             </div>
         </div>
     )
 }
+
+export default SongCard
