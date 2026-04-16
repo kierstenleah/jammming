@@ -26,6 +26,14 @@ h2:nth-child(3){
     margin: 1em 0 2.5em 0;
 }
 
+h4{
+    font-weight: 600;
+}
+
+p{
+    color: white;
+}
+
 .search{
     width: 97%;
     height: 1em;
@@ -73,6 +81,8 @@ h2:nth-child(3){
     color: white;
     font-family: inherit;
     font-weight: 700;
+    margin: 1em 0;
+    padding: 0;
 }
 
 .playlistName:focus{
@@ -81,6 +91,7 @@ h2:nth-child(3){
 
 .playlistName::placeholder{
     color: white;
+    opacity: 0.6;
 }
 
 .motionDiv{
@@ -104,6 +115,87 @@ h2:nth-child(3){
     justify-self: flex-end;
     flex: 1 1 1%;
     text-align: right;
+}
+
+.saveForm{
+    padding: 2%;
+    background: rgba(0, 0, 0, 0.233);
+    width: 70%;
+    height: 70%;
+    margin: auto;
+    color: white;
+}
+
+.saveForm h2{
+    font-size: 2em;
+    text-align: center;
+}
+
+.backBtn{
+    
+}
+
+.formContainer{
+    font-size: 1.5em;
+    font-weight: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2%;
+    margin: 4% 0;
+}
+
+form label, form input{
+    display: block;
+    margin: 3rem 0;
+    padding: 1%;
+}
+
+form input{
+    width: 80%;
+    font-size: 0.75em;
+    background: rgb(182, 146, 182);
+    border: none;
+}
+
+.inputs{
+    flex: 1 1 100%;
+    display: block;
+}
+
+.labels{
+    flex: 1 1 60%;
+    text-align: right;
+}
+
+form input:hover{
+    background: rgb(170, 128, 170);;
+}
+
+form input:focus{
+    background: rgb(182, 146, 182);
+    outline: 2px solid white;
+}
+
+.submitBtn{
+    display: block;
+    margin: auto auto;
+    background: white;
+    border: none;
+    padding: 1%;
+    font-size: inherit;
+    font-family: inherit;
+    width: 20%;
+}
+
+.submitBtn:hover{
+    background: rgb(190, 190, 190);
+}
+
+.submitBtn:active{
+    background: rgb(47, 47, 47);
+    color: white;
+    border: 2px solid white
 }
 
 

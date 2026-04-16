@@ -3,8 +3,8 @@ import React from 'react';
 import './App.css';
 import styles from './css/main.module.css';
 import Landing from './components/landing';
-import Search from './components/search';
 import ResultsPage from './components/results';
+import SaveForm from './components/SaveForm';
 
 function App() {
 
@@ -12,6 +12,8 @@ function App() {
   const [input, setInput] = useState('');
   const [auth, setAuth] = useState('');
   const [results, setResults] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [showSaveForm, setShowSaveForm] = useState(false)
 
   useEffect(()=>{
     async function getAuth(){
@@ -28,17 +30,23 @@ function App() {
     getAuth();
   }, [])
 
-  async function getData(input, offset, limit){
-    const url=`https://api.spotify.com/v1/search?q=${input}&type=album%2Ctrack%2Cartist&offset=${offset}&limit=${limit}`;
+  async function getData(input, offset){
+    if(!input){
+      return
+    }
+    const url=`https://api.spotify.com/v1/search?q=${input}&type=track&offset=${offset}&limit=10`;
 
     const response = await fetch(url, {
         headers: {
         "Authorization": `Bearer ${auth}`
       }
     });
-    const result = await response.json();
-    setResults(result);
-    }
+    setOffset(offset+10);
+    const newResults = await response.json();
+    
+
+    return newResults
+  }
 
   function handleChange(e){
       e.preventDefault();
@@ -48,15 +56,63 @@ function App() {
         setShowResults(true);
       }
       try{
-        getData(newValue,0,10);
+        getData(newValue,0).then(response => setResults(response?.tracks?.items))
       } catch(e){
         console.log(e)
       }
       
     }
 
+  const [playlistName, setPlaylistName] = useState('')
+  function handleNameChange(e){
+      e.preventDefault();
+      setPlaylistName(e.target.value);
+  }
 
-  return showResults ? (<ResultsPage handleChange={handleChange} searchInput={input} results= {results}/>) : (<Landing onInput={handleChange}/>)
+  function showMore() { 
+    getData(input, offset).then(response=> setResults(prev=>([...prev, ...response?.tracks?.items])))
+  };
+
+  const [addedSongs, setAddedSongs] = useState([])
+
+  function addSong(song){
+      const newSong = JSON.parse(song);
+      if(addedSongs.some((song)=>JSON.stringify(song)===JSON.stringify(newSong))){
+          return
+      }else{
+          if(addedSongs.length>0){
+          setAddedSongs(prev=>([...prev, newSong]));
+          } else{
+              setAddedSongs([newSong])
+          }
+      }
+  };
+
+  function deleteSong(song){
+      const deletedSong = JSON.parse(song)
+      setAddedSongs(prev=> prev.filter((prevItem)=>JSON.stringify(prevItem)!==JSON.stringify(deletedSong)));
+      console.log(addedSongs)
+  }
+
+  const [userId, setUserId] = useState('');
+
+  function handleUserId(e){
+    e.preventDefault();
+    setUserId(e.target.value)
+    console.log(e.target.value)
+  }
+
+  async function createPlaylist(userId, songs){
+    
+  }
+
+  if(showSaveForm){
+    return <SaveForm closeSaveForm={()=>setShowSaveForm(false)} addedSongs={addedSongs} handleSubmit={()=>createPlaylist(userId, addedSongs)} handleUserId={handleUserId} playlistName={playlistName}/>
+  }
+
+  return showResults ? (
+  <ResultsPage handleChange={handleChange} searchInput={input} results={results} showMore={showMore} showSaveForm={()=>setShowSaveForm(true)} addedSongs={addedSongs} addSong={addSong} deleteSong={deleteSong} handleNameChange={handleNameChange}/>
+) : (<Landing onInput={handleChange}/>)
   
 }
 

@@ -1,11 +1,13 @@
 import styles from '../css/main.module.css';
-import React from 'react';
+import {useState} from 'react';
 import Search from './search';
 import { motion } from "motion/react";
 import SongCard from './songCard';
 
 
-function ResultsPage({handleChange, searchInput, results}){
+
+function ResultsPage({handleChange, searchInput, results, showMore, showSaveForm, addSong, deleteSong, addedSongs, handleNameChange, playlistName}){
+
 
     return(
         <div className={styles.resultsPage}>
@@ -19,21 +21,27 @@ function ResultsPage({handleChange, searchInput, results}){
                     <section className={styles.results}>
                         <h2>Results</h2>
                         {results ? (
-                        results?.tracks?.items?.map((track, index)=> <SongCard key={index} songName={track?.name} artistName={track?.artists.map(artist=> artist.name)} imgUrl={track?.album.images[0].url}/>)
+                        results?.map((track, index)=> <SongCard key={index} songName={track?.name} artistName={track?.artists?.map(artist=> artist.name)} imgUrl={track?.album?.images[0]?.url} addSong={()=>addSong(JSON.stringify(track))} />)
                         ) : (
                         <p>Loading results...</p>
                         )}
                         
-
+                        <button onClick={showMore}>Show more</button>
                     </section>
 
                     <section className={styles.playlist}>
-                        <input type='text' placeholder='New Playlist' className={styles.playlistName} />
-
+                        <input type='text' placeholder='New Playlist' className={styles.playlistName} onChange={handleNameChange} value={playlistName}/>
+                        {addedSongs.length>0 ? (
+                        addedSongs?.map((track, index)=> <SongCard key={index} songName={track?.name} artistName={track?.artists?.map(artist=> artist.name)} imgUrl={track?.album?.images[0]?.url} isAdded={true} deleteSong={()=>deleteSong(JSON.stringify(track))}/>)
+                        ) : (
+                        <p>Add jams to your playlist!</p>
+                        )}
+                        <button onClick={showSaveForm} >Save to Spotify</button>
                 </section>
                 </div>
             </motion.div>
         </div>
+        
     )
 }
 
