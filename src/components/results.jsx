@@ -6,7 +6,7 @@ import SongCard from './songCard';
 
 
 
-function ResultsPage({handleChange, searchInput, results, showMore, showSaveForm, addSong, deleteSong, addedSongs, handleNameChange, playlistName}){
+function ResultsPage({handleChange, searchInput, results, showMore, addSong, deleteSong, addedSongs, handleNameChange, playlistName, handleSubmit}){
 
 
     return(
@@ -26,7 +26,7 @@ function ResultsPage({handleChange, searchInput, results, showMore, showSaveForm
                         <p>Loading results...</p>
                         )}
                         
-                        <button onClick={showMore}>Show more</button>
+                        <button onClick={showMore} className={styles.submitBtn}>Show more</button>
                     </section>
 
                     <section className={styles.playlist}>
@@ -36,7 +36,7 @@ function ResultsPage({handleChange, searchInput, results, showMore, showSaveForm
                         ) : (
                         <p>Add jams to your playlist!</p>
                         )}
-                        <button onClick={showSaveForm} >Save to Spotify</button>
+                        <button onClick={handleSubmit} className={styles.submitBtn}>Save to Spotify</button>
                 </section>
                 </div>
             </motion.div>

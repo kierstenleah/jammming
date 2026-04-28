@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import React from 'react';
 import './App.css';
-import styles from './css/main.module.css';
 import Landing from './components/landing';
 import ResultsPage from './components/results';
-import SaveForm from './components/SaveForm';
 import Confirmation from './components/confirmation'
 import { Buffer } from 'buffer';
 window.Buffer = Buffer;
@@ -18,7 +16,6 @@ function App() {
   const [auth, setAuth] = useState('');
   const [results, setResults] = useState('');
   const [offset, setOffset] = useState(0);
-  const [showSaveForm, setShowSaveForm] = useState(false);
 
 
   useEffect(()=>{
@@ -39,14 +36,14 @@ function App() {
 
   const isMounted = useRef(false);
 
-  useEffect(()=>{
-    if(window.location.search.includes('code') && isLoggedIn===false && !isMounted.current){
+  useEffect(()=>{  // waits for redirect to complete to begin next step
+    if(window.location.search.includes('code') && !isMounted.current){
       getAccessToken()
     }
     isMounted.current=true;
   }, [])
 
-  async function getData(input, offset){
+  async function getData(input, offset){  // fetches results from search input
     if(!input){
       return
     }
@@ -59,16 +56,14 @@ function App() {
     });
     setOffset(offset+10);
     const newResults = await response.json();
-    
-
     return newResults
   }
 
-  function handleChange(e){
+  function handleChange(e){  // saves search input and calls fetch function
       e.preventDefault();
       const newValue = e.target.value
       setInput(newValue);
-      if (showResults===false){
+      if (showResults===false){ // opens results page on initial input
         setShowResults(true);
       }
       try{
@@ -80,19 +75,18 @@ function App() {
     }
 
   const [playlistName, setPlaylistName] = useState('')
-  function handleNameChange(e){
+  function handleNameChange(e){ // updates users playlist name
       e.preventDefault();
       setPlaylistName(e.target.value);
-      console.log(playlistName)
   }
 
-  function showMore() { 
+  function showMore() { // allows user to load more results
     getData(input, offset).then(response=> setResults(prev=>([...prev, ...response?.tracks?.items])))
   };
 
   const [addedSongs, setAddedSongs] = useState([])
 
-  function addSong(song){
+  function addSong(song){ // stores added songs
       const newSong = JSON.parse(song);
       if(addedSongs.some((song)=>JSON.stringify(song)===JSON.stringify(newSong))){
           return
@@ -105,27 +99,18 @@ function App() {
       }
   }
 
-  function deleteSong(song){
+  function deleteSong(song){ // deletes a song
       const deletedSong = JSON.parse(song)
       setAddedSongs(prev=> prev.filter((prevItem)=>JSON.stringify(prevItem)!==JSON.stringify(deletedSong)));
       console.log(addedSongs)
   }
 
-  const [userId, setUserId] = useState('');
-
-  function handleUserId(e){
-    e.preventDefault();
-    setUserId(e.target.value)
-    console.log(e.target.value)
-  };
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  async function redirect(){
+  async function redirect(){  //brings user to spotify login page
 
     localStorage.setItem('pendingPlaylistName', playlistName);
     localStorage.setItem('playlistItems', JSON.stringify(addedSongs));
-    console.log(addedSongs)
 
     const redirectUrl = 'https://accounts.spotify.com/authorize?client_id=cee2d5050ae84df08c8f396ad122899a&response_type=code&client_secret=92d9574c30e447a7bd5c726070f65900&redirect_uri=http://127.0.0.1:5173/callback&scope=playlist-modify-public';
     try{
@@ -135,19 +120,11 @@ function App() {
     };
   };
 
-  async function getAccessToken(){
+  async function getAccessToken(){ // retrieves authorization from spotify API
     setIsLoggedIn(true);
-    setShowSaveForm(true);
-    let code = undefined;
-    let queryParams;
-
-    do{
-      queryParams = new URLSearchParams(window.location.search);
-      code = queryParams.get("code");
-      console.log(code);
-      console.log(queryParams)
-    }while(window.location.search.includes('code')===false)
-
+    
+    const queryParams = new URLSearchParams(window.location.search);
+    const code = queryParams.get("code");
     const clientSecret = "92d9574c30e447a7bd5c726070f65900";
     const clientId = "cee2d5050ae84df08c8f396ad122899a";
     const authEncoded = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
@@ -184,12 +161,14 @@ function App() {
       body: JSON.stringify({"name": name})
     })
     const result2 = await response.json();
-    console.log(result2.id);
 
-    addSongs(result2.id, accessToken)
+    addSongs(result2, accessToken)
   }
 
-  async function addSongs(id, accessToken){
+  const [playlistURL, setPlaylistURL] = useState('spotify.com')
+  async function addSongs(result, accessToken){
+    const id = result.id;
+    setPlaylistURL(result.external_urls.spotify)
     let playlistItems = localStorage.getItem('playlistItems');
     playlistItems = JSON.parse(playlistItems);
     console.log(playlistItems)
@@ -209,12 +188,12 @@ function App() {
   }
 
   
-  if(showSaveForm){
-    return  isLoggedIn ? (<Confirmation />):(<SaveForm closeSaveForm={()=>setShowSaveForm(false)} addedSongs={addedSongs} handleSubmit={(e)=> {e.preventDefault(); redirect();}} handleUserId={handleUserId} playlistName={playlistName} handleNameChange={handleNameChange}/>)
+  if(isLoggedIn){
+    return  <Confirmation playlistURL={playlistURL}/>
   }
 
   return showResults ? (
-  <ResultsPage handleChange={handleChange} searchInput={input} results={results} showMore={showMore} showSaveForm={()=>setShowSaveForm(true)} addedSongs={addedSongs} addSong={addSong} deleteSong={deleteSong} handleNameChange={handleNameChange}/>
+  <ResultsPage handleChange={handleChange} searchInput={input} results={results} showMore={showMore} addedSongs={addedSongs} addSong={addSong} deleteSong={deleteSong} handleNameChange={handleNameChange} handleSubmit={(e)=> {e.preventDefault(); redirect()}}/>
   ) : (<Landing onInput={handleChange}/>)
   
 }
